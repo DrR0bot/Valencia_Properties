@@ -18,3 +18,10 @@ __pycache__/
 # Temp files
 *.tmp
 agent-tools/
+
+# SQLite WAL files (the .sqlite is committed, but WAL/SHM are transient)
+*.sqlite-wal
+*.sqlite-shm
+
+# Streamlit cache
+.streamlit/cache/

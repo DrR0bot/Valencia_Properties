@@ -152,11 +152,11 @@ Valencia_House/
 
 ## Milestones
 
-- **M1** (today): Plan + Phase 1 done
-- **M2**: EDA notebook + insights
-- **M3**: Working price model
-- **M4**: Live Streamlit dashboard
-- **M5**: Weekly tracking running
+- [x] **M1**: Plan + Phase 1 (data pipeline)
+- [x] **M2**: Phase 2 — EDA notebook + INSIGHTS.md
+- [x] **M3**: Phase 3 — price models + MODEL_REPORT.md
+- [x] **M4**: Phase 4 — Streamlit dashboard with 6 pages
+- [x] **M5**: Phase 5 — SQLite tracking + GitHub Actions weekly cron
 
 ## Open Questions
 

@@ -1,0 +1,74 @@
+name: Weekly Valencia Properties Update
+
+on:
+  schedule:
+    # Every Monday at 06:00 UTC
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      max_pages:
+        description: "Max pages to scrape (0 = all)"
+        required: false
+        default: "0"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scraper
+        env:
+          MAX_PAGES: ${{ github.event.inputs.max_pages || '0' }}
+        run: |
+          if [ "$MAX_PAGES" = "0" ]; then
+            python scraper.py || echo "Scraper exited with non-zero — using existing CSV"
+          else
+            python scraper.py --max-pages "$MAX_PAGES" || echo "Scraper exited early"
+          fi
+        continue-on-error: true
+
+      - name: Run data pipeline
+        run: python data_pipeline.py
+
+      - name: Score with existing models
+        run: python models/price_model.py --score-only
+
+      - name: Record snapshot in tracker
+        run: python tracker.py snapshot
+
+      - name: Show stats
+        run: |
+          python tracker.py stats
+          echo "Drops detected since last week:"
+          python tracker.py drops --days 6 --pct 1.0 || true
+
+      - name: Commit & push updates
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add valencia_houses.csv valencia_clean.parquet valencia_scored.parquet history.sqlite
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Weekly update: $(date -u +%Y-%m-%d) snapshot"
+            git push
+          fi
