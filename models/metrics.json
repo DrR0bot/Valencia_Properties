@@ -1,0 +1,22 @@
+{
+  "casa": {
+    "name": "Casa",
+    "n_train": 2568,
+    "n_test": 642,
+    "mae_eur": 103827.0,
+    "mape_pct": 27.28,
+    "median_ape_pct": 19.28,
+    "r2_log_scale": 0.7899,
+    "best_iteration": 178
+  },
+  "piso": {
+    "name": "Piso",
+    "n_train": 4440,
+    "n_test": 1111,
+    "mae_eur": 46060.0,
+    "mape_pct": 15.02,
+    "median_ape_pct": 10.2,
+    "r2_log_scale": 0.8758,
+    "best_iteration": 550
+  }
+}
